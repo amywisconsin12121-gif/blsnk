@@ -1,0 +1,11 @@
+.env
+.env.*
+knowledge.md
+claude-knowledge-data/
+.claude/
+*.jsonl
+__pycache__/
+*.pyc
+live-test-results.json
+live-test-budget.json
+live-test-budget.lock

@@ -1,0 +1,14 @@
+{
+  "requests": {
+    "forwarded_to_fake_upstream": 4,
+    "reserved_request_bytes": 772,
+    "rerun_reused_budget": true
+  },
+  "bytes": {
+    "forwarded_to_fake_upstream": 1,
+    "reserved_request_bytes": 25193,
+    "rerun_reused_budget": true
+  },
+  "live_provider_requests": 0,
+  "output_model_and_input_limits_block_before_forwarding": true
+}

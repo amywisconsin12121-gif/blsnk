@@ -1,0 +1,17 @@
+{
+  "name": "Claude full-source knowledge",
+  "image": "mcr.microsoft.com/devcontainers/universal:2",
+  "hostRequirements": {
+    "cpus": 2
+  },
+  "remoteEnv": {
+    "LANG": "C.UTF-8",
+    "LC_ALL": "C.UTF-8"
+  },
+  "secrets": {
+    "CONCENTRATE_API_KEY": {
+      "description": "Your Concentrate API key. Store the value as a Codespaces secret."
+    }
+  },
+  "postCreateCommand": "bash .claude-knowledge/setup.sh"
+}

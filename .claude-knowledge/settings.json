@@ -1,0 +1,14 @@
+{
+  "outputStyle": "Knowledge",
+  "alwaysThinkingEnabled": true,
+  "autoMemoryEnabled": false,
+  "autoCompactEnabled": false,
+  "cleanupPeriodDays": 3650,
+  "fastMode": false,
+  "fastModePerSessionOptIn": true,
+  "promptSuggestionEnabled": false,
+  "promptCacheTtl": "1h",
+  "fallbackModel": [],
+  "availableModels": ["anthropic/claude-opus-5-5"],
+  "enforceAvailableModels": true
+}
