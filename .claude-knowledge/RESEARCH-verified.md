@@ -125,33 +125,42 @@ prefix after process exit/resume; restored prior question and same session ID;
 1-hour cache markers; custom non-coding style; no retrieval tools; missing-key and
 changed-source refusal; interactive Arabic input transport; `/exit`.
 
-**Not completed:** fresh Codespace installation/SSH, real Concentrate authentication,
-live Opus answers, provider-side effort behavior, actual cache hits and billing,
-gateway token counting, and Android display. Mock response usage is simulated and
-does not establish live caching or model quality. **Paid model input/output so far: 0.**
+**Passed in the fresh 2-core Codespace:** old Codespace deletion; installation;
+SSH; the selected `CONCENTRATE_API_KEY` secret reaching a login shell; the large
+native-client/mock checks above; stopping until GitHub reported `Shutdown` and
+reconnecting over SSH; the same source hash, saved session and secret after restart.
+The native interactive UI also passed: initial theme/notice/trust screens; Arabic
+input transport; full-source inclusion; `/exit`; and reopening the same conversation
+with its previous answer displayed and no new request. That UI check used a local
+stub and made zero paid calls.
+The tested file-copy command requires `gh codespace cp --expand` with the given
+constant remote paths. Downloading and uploading the Arabic fixture preserved
+all 511 bytes and the same SHA-256 hash. No knowledge or API key is committed to
+the public repo.
 
-The authenticated account is `amywisconsin12121-gif`. The user selected public
-`amywisconsin12121-gif/blsnk` and confirmed the secret name `CONCENTRATE_API_KEY`.
-Codespaces listing is empty, so there are no old Codespaces to delete. Both machine
-listing and fresh Codespace creation returned HTTP 403, “Resource not accessible
-by integration.” The saved GitHub CLI login reports no OAuth scopes. Real testing
-is blocked by GitHub authorization; the secret's presence inside a Codespace
-cannot yet be verified.
+**Passed with real Concentrate/Opus:** two questions over the entire 511-byte
+synthetic Arabic file. Both requests used `max` effort and adaptive thinking,
+included the source intact, and exposed no tools. The first answer correctly
+applied a distant exception; the second correctly used both the source and the
+previous question. They shared the same saved session. Provider usage confirmed
+one-hour cache writes and a **2,251-token cache read on the second request**.
 
-A supplied classic PAT was saved through `gh auth login --with-token`, but both
-operations remained blocked. Two read-only checks sent **no Authorization header**
-and an **invalid diagnostic token** to `/user`; both still returned HTTP 200 and
-the same authenticated account. The environment's GitHub connection overrides
-the request credentials. This prevents us from validating the PAT's real scopes;
-requesting another token would not address the observed blocker. The repository
-setup is committed locally and has not been pushed.
+**Live totals: 5,140 logical input tokens**, including system, history, cache reads
+and writes; **883 output tokens**, including 671 thinking tokens. This is below the
+50,000-personal-input allowance even when conservatively counting all input.
+The CLI's cumulative list-price estimate is **$0.0412062**; the Concentrate account
+dashboard is authoritative for charges. No further paid tests are needed.
 
-Live tests will use a small synthetic source, not the 124K-token dump. All reruns
-share one persistent budget: four inference requests at most, 40,000 total raw
-request bytes including system/history/source, and at most 2,048 output tokens
-per request. Failed upstream attempts count before forwarding. These conservative
-limits keep our personal input below the user's 50,000-token total allowance.
-The Android SSH app and actual phone rendering still need to be checked.
+The tests reserved 27,929 raw request bytes. Every invocation shares a persistent
+guard: at most four inference requests, 40,000 total raw request bytes, and at most
+2,048 output tokens per request. Failed attempts count before forwarding. Normal
+user sessions retain the full 128K output headroom; the live test's small output
+ceiling is isolated from the user's setup.
+
+**Still unverified:** the original file's Opus token count and your Android app's
+glyph shaping, direction, cursor and keyboard. Large-file checks used localhost
+and establish client inclusion, not perfect large-source comprehension. Real
+answers and cache counts above came from the live provider, not the mock.
 
 ## Sources
 

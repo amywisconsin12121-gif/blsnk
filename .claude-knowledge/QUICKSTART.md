@@ -1,11 +1,14 @@
-# Short workflow — live deployment is pending repository access
+# Short workflow — Linux and live model verified
 
 These files configure Linux Claude Code in GitHub Codespaces. Your Android app is
 only the SSH client. No Anthropic subscription is required for a Concentrate key.
 
-The launcher has passed local native Claude Code tests. Authentication to
-Concentrate, real cache hits, Codespaces SSH, and your phone's display are still
-untested. Do not treat this as a completed live deployment.
+Codespaces SSH, Concentrate authentication, maximum effort, actual one-hour cache
+reuse and conversation persistence after stopping/restarting passed tests. The
+two small live requests used 5,140 input tokens in total, including system and
+cached input, plus 883 output tokens. Your Android app's display remains untested.
+
+Prepared Codespace: `claude-knowledge-wv5gr9v9wq9xhvg4q`.
 
 ## Once your fresh Codespace is configured
 
@@ -16,6 +19,9 @@ untested. Do not treat this as a completed live deployment.
 First launch: select a theme, press Enter through the introductory notice, then
 select **Yes, I trust this folder** for your own prepared folder. The Concentrate
 secret supplies authentication; you do not need an Anthropic login.
+
+At the trust menu, **No, exit** is selected first: press Down, then Enter. Those
+first-launch screens and `/exit`/reopening were tested in the Codespace.
 
 The single `knowledge` command always sets Opus 5.5, maximum effort, adaptive
 thinking, 1M context, 128K output headroom, and 1-hour caching. It embeds the whole
@@ -48,9 +54,19 @@ After allowing storage access with `termux-setup-storage`, a file in Downloads c
 be copied with:
 
 ```sh
-gh codespace cp -c YOUR_CODESPACE ~/storage/downloads/knowledge.md remote:/workspaces/claude-knowledge-data/knowledge.md
-gh codespace ssh -c YOUR_CODESPACE
+pkg install gh openssh
+termux-setup-storage
+gh auth login --hostname github.com --git-protocol https --web --scopes codespace
+gh codespace cp --expand -c claude-knowledge-wv5gr9v9wq9xhvg4q ~/storage/downloads/knowledge.md remote:/workspaces/claude-knowledge-data/knowledge.md
+gh codespace ssh -c claude-knowledge-wv5gr9v9wq9xhvg4q
+knowledge
 ```
+
+The copy command's `--expand` flag was necessary and tested with these constant
+remote paths. Downloading and uploading the Arabic test file preserved its bytes.
+Run `knowledge` after SSH opens the remote shell. Your original source is supplied
+in full when you ask your first question; installation and `knowledge check` do
+not send it to the model.
 
 Arabic shaping and text direction depend on the Android terminal/version. Stock
 Termux 0.118.3 has an open report of disconnected Arabic letters and wrong

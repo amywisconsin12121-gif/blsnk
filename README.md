@@ -3,7 +3,10 @@
 Setup for complete Arabic source files, Opus 5.5 through Concentrate, maximum
 effort, adaptive thinking, 1M context and one-hour cache requests.
 
-**Status: local native-client tests passed; live Codespaces/provider tests pending.**
+**Status: Linux Codespaces, live Opus, caching and stop/resume tested. Android
+display still needs a check on your SSH app.**
+
+Your prepared Codespace is `claude-knowledge-wv5gr9v9wq9xhvg4q`.
 
 The fresh Codespace installs Claude Code automatically. Add `CONCENTRATE_API_KEY`
 as a **Codespaces** secret before creating it. No paid model requests run during
@@ -11,7 +14,13 @@ installation.
 
 1. Upload the complete original file to
    `/workspaces/claude-knowledge-data/knowledge.md`.
-2. Connect over SSH and run `knowledge`.
+2. Connect over SSH and run `knowledge`:
+
+   ```sh
+   gh codespace ssh -c claude-knowledge-wv5gr9v9wq9xhvg4q
+   knowledge
+   ```
+
 3. Stop: `/exit`, then **Stop codespace**. Resume: SSH into that same Codespace
    and run `knowledge` again.
 
@@ -21,6 +30,10 @@ key or private source to this public repository.
 Details: [.claude-knowledge/QUICKSTART.md](.claude-knowledge/QUICKSTART.md).
 Research and limits:
 [.claude-knowledge/RESEARCH-verified.md](.claude-knowledge/RESEARCH-verified.md).
+
+Two small live requests used **5,140 total input tokens** and **883 output tokens**.
+Both answered correctly; the second reused **2,251 cached tokens**. Large-file
+inclusion was tested separately against localhost, with no paid model call.
 
 ## Developer live test
 

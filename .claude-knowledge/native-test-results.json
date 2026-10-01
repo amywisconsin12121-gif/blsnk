@@ -15,10 +15,7 @@
   "arabic_transport": true,
   "missing_key_blocked": true,
   "changed_source_blocked": true,
-  "session_id": "d208802b-7630-4241-ac87-fc9aef440fdc",
-  "test_data_dir": "/tmp/claude-full-source-test-w6tgl541",
-  "live_provider_authentication_and_cache_hits": "not tested",
-  "interactive_arabic_transport": true,
-  "interactive_exit": true,
-  "interactive_mock_data_dir": "/tmp/claude-interactive-test-8pu7z64x"
+  "session_id": "95f68cd7-3d24-4b26-a0e5-857a4c263e27",
+  "test_data_dir": "/tmp/claude-full-source-test-gtp3bd_l",
+  "live_provider_authentication_and_cache_hits": "not tested"
 }
