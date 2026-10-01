@@ -27,7 +27,7 @@ import json, pathlib, shutil, sys
 data, setup, secret_name = pathlib.Path(sys.argv[1]), pathlib.Path(sys.argv[2]), sys.argv[3]
 shutil.copyfile(setup / 'knowledge.py', data / 'knowledge.py')
 (data / 'knowledge.py').chmod(0o700)
-for name in ('display_check.py', 'native_mock_test.py'):
+for name in ('display_check.py', 'native_mock_test.py', 'spend_guard.py'):
     shutil.copyfile(setup / name, data / name)
 (data / 'display_check.py').chmod(0o700)
 shutil.copyfile(setup / 'Knowledge.md', data / '.claude/output-styles/Knowledge.md')

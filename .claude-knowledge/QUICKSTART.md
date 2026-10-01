@@ -1,4 +1,4 @@
-# Short workflow — Linux and live model verified
+# Short workflow — Linux Claude Code with cost approval
 
 These files configure Linux Claude Code in GitHub Codespaces. Your Android app is
 only the SSH client. No Anthropic subscription is required for a Concentrate key.
@@ -6,7 +6,9 @@ only the SSH client. No Anthropic subscription is required for a Concentrate key
 Codespaces SSH, Concentrate authentication, maximum effort, actual one-hour cache
 reuse and conversation persistence after stopping/restarting passed tests. The
 two small live requests used 5,140 input tokens in total, including system and
-cached input, plus 883 output tokens. Your Android app's display remains untested.
+cached input, plus 883 output tokens. Arabic input/output and stopping/reopening
+were subsequently checked on the actual phone. Small successful model tests do
+not establish reliable answers over the full private file.
 
 Prepared Codespace: `claude-knowledge-wv5gr9v9wq9xhvg4q`.
 
@@ -30,15 +32,35 @@ its hash, session ID, and whether the secret is present; it makes no paid reques
 Inside Claude Code, `/status` checks the endpoint/model, and `/usage` shows usage.
 Your Concentrate dashboard determines the actual bill.
 
+## Before a paid request
+
+Paste the complete question and press Enter. A **COST REVIEW** then appears before
+the request reaches Opus. It shows a conservative maximum at published standard
+rates, including a possible fresh one-hour cache write and the full thinking-plus-
+answer allowance. Type the displayed USD amount to approve that one request, or
+press Enter to cancel without sending a paid request. Approval expires in five minutes.
+
+Only one upstream attempt is allowed for each human submission. Automatic retry,
+non-streaming fallback and model fallback are disabled; the local guard also blocks
+additional attempts. An accepted request can still be billed if it fails or produces
+no answer. A thinking-only response now produces an explicit error instead of a
+silent blank result. The guard does not guarantee an answer or a provider refund.
+
+Max effort and 128,000 output tokens remain the defaults. That output limit includes
+thinking. At max effort the model can exhaust its allowance thinking, without any
+answer text. Selecting lower effort trades reasoning volume against cost and needs
+a deliberate choice; the guard does not silently lower effort or remove source words.
+
 ## Stop and resume
 
-- Finish the response, type `/exit`, then **Stop codespace** at
+- If a cost review is open, first press Enter to cancel it. Finish any response,
+  type `/exit`, then **Stop codespace** at
   <https://github.com/codespaces>. This saves the conversation and stops compute.
 - Later connect to that same Codespace over SSH and run `knowledge` again.
 - To stop a response early, press Esc. Type `/exit` after it stops.
 - `knowledge new` starts a separate conversation with the whole file again.
 - To leave an answer running through a phone disconnect, start with
-  `tmux new -As knowledge`, then run `knowledge`. Reconnect with the same tmux command.
+  `tmux new -As knowledge 'bash -lc knowledge'`. Reconnect with the same command.
   Detaching from tmux keeps the Linux process running; stopping the Codespace does not.
 
 Closing the SSH app does not stop Codespaces billing. Stopped Codespaces still
@@ -102,7 +124,7 @@ Arabic byte transport, and complete-file upload were tested against your actual
 Codespace with **zero model calls**. The ConnectBot download's SHA-256 matched
 GitHub's official release digest:
 `d1407371489c3995574c8c0e05be3ad801fe1fcee1373bae4943ec67093f4031`.
-Physical Android display remains unverified until your phone check.
+The user subsequently confirmed the physical Arabic display and stop/resume flow.
 
 **Stop:** finish the answer, type `/exit`, then `exit` in the Linux shell. In
 Termux press Ctrl+C to close the tunnel, then run `cs stop` to stop Codespaces

@@ -1,0 +1,67 @@
+{
+  "test": "native Claude Code cost guard",
+  "paid_requests": 0,
+  "full_source_preserved": true,
+  "max_effort_preserved": true,
+  "output_ceiling": 128000,
+  "cases": [
+    {
+      "mode": "success",
+      "ceiling": "3",
+      "upstream_calls": 1,
+      "native_exit_code": 0
+    },
+    {
+      "mode": "success_crlf",
+      "ceiling": "3",
+      "upstream_calls": 1,
+      "native_exit_code": 0
+    },
+    {
+      "mode": "success",
+      "ceiling": null,
+      "upstream_calls": 0,
+      "native_exit_code": 1
+    },
+    {
+      "mode": "success",
+      "ceiling": "0.01",
+      "upstream_calls": 0,
+      "native_exit_code": 1
+    },
+    {
+      "mode": "http_error",
+      "ceiling": "3",
+      "upstream_calls": 1,
+      "native_exit_code": 1
+    },
+    {
+      "mode": "empty_stream",
+      "ceiling": "3",
+      "upstream_calls": 1,
+      "native_exit_code": 1
+    },
+    {
+      "mode": "thinking_only",
+      "ceiling": "3",
+      "upstream_calls": 1,
+      "native_exit_code": 1
+    },
+    {
+      "mode": "interactive",
+      "cost_review_before_forward": true,
+      "cancel_makes_no_upstream_request": true,
+      "one_approval_one_request": true,
+      "next_question_needs_new_approval": true,
+      "resume_makes_no_upstream_request": true,
+      "native_exit_code": 0,
+      "upstream_calls": 2
+    }
+  ],
+  "large_source_relay": {
+    "source_bytes": 992235,
+    "full_utf8_and_crlf_preserved": true,
+    "upstream_calls": 1,
+    "paid_requests": 0
+  }
+}

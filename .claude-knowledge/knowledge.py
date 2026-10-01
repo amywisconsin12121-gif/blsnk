@@ -1,12 +1,15 @@
 #!/usr/bin/env python3
 """Start or resume Claude Code with an immutable, complete source prompt."""
 import argparse
+from decimal import InvalidOperation
 import hashlib
 import json
 import os
 from pathlib import Path
 import shutil
+import shlex
 import sys
+import urllib.parse
 import uuid
 
 MODEL = 'anthropic/claude-opus-5-5[1m]'
@@ -37,7 +40,10 @@ def main():
     parser.add_argument('session', nargs='?', help='Optional session UUID for resume')
     parser.add_argument('--print', dest='prompt', help='Send one question non-interactively (same model and source)')
     parser.add_argument('--json', action='store_true', help='Return structured output in print mode')
+    parser.add_argument('--max-cost', help='Explicit USD ceiling for one print-mode question; normal interactive use asks before each paid request')
     args = parser.parse_args()
+    if args.max_cost is not None and args.prompt is None:
+        fail('--max-cost requires a single --print question. Interactive questions get individual cost reviews.')
     data = Path(os.environ.get('CLAUDE_KNOWLEDGE_DIR', '/workspaces/claude-knowledge-data')).resolve()
     source_path = data / 'knowledge.md'
     if not source_path.is_file():
@@ -126,6 +132,12 @@ def main():
         'CLAUDE_CODE_ATTRIBUTION_HEADER': '0',
         'CLAUDE_CONFIG_DIR': str(config), 'CLAUDE_CODE_PROJECT_DIR_NAME': 'knowledge',
         'API_TIMEOUT_MS': '3600000', 'LANG': 'C.UTF-8', 'LC_ALL': 'C.UTF-8',
+        'CLAUDE_CODE_MAX_RETRIES': '0',
+        'CLAUDE_CODE_DISABLE_NONSTREAMING_FALLBACK': '1',
+        'CLAUDE_CODE_NONSTREAMING_TIMEOUT_RETRIES': '0',
+        'CLAUDE_CODE_DISABLE_MODEL_ACCESS_FALLBACK': '1',
+        'CLAUDE_CODE_DISABLE_REFUSAL_FALLBACK': '1',
+        'CLAUDE_CODE_NO_MODEL_FALLBACK': '1',
     })
     for variable in ('MAX_THINKING_TOKENS', 'CLAUDE_CODE_DISABLE_THINKING',
                      'CLAUDE_CODE_DISABLE_ADAPTIVE_THINKING', 'CLAUDE_CODE_DISABLE_1M_CONTEXT',
@@ -138,9 +150,23 @@ def main():
         if not args.prompt or not env.get('CLAUDE_KNOWLEDGE_TEST_ENDPOINT'):
             fail('A test output limit requires print mode and a test relay endpoint.')
         env['CLAUDE_CODE_MAX_OUTPUT_TOKENS'] = env['CLAUDE_KNOWLEDGE_TEST_OUTPUT_LIMIT']
+    test_endpoint = env.get('CLAUDE_KNOWLEDGE_TEST_ENDPOINT')
+    settings_path = config / 'settings.json'
+    if test_endpoint:
+        endpoint = urllib.parse.urlsplit(test_endpoint)
+        if endpoint.scheme != 'http' or endpoint.hostname != '127.0.0.1' or not endpoint.port:
+            fail('Test endpoints must be an HTTP server on 127.0.0.1. No request was sent.')
+    else:
+        settings = json.loads(settings_path.read_text())
+        guard_script = Path(__file__).resolve().parent / 'spend_guard.py'
+        hook_command = shlex.quote(sys.executable) + ' ' + shlex.quote(str(guard_script)) + ' mark'
+        settings.setdefault('hooks', {}).setdefault('UserPromptSubmit', []).append(
+            {'hooks': [{'type': 'command', 'command': hook_command, 'timeout': 15}]})
+        settings_path = config / 'guard-settings.json'
+        write_json(settings_path, settings)
     command = [executable, '--model', MODEL, '--effort', 'max',
                '--append-system-prompt-file', str(prompt_file), '--system-prompt-snapshot', 'on',
-               '--settings', str(config / 'settings.json'), '--tools', '',
+               '--settings', str(settings_path), '--tools', '',
                '--strict-mcp-config', '--mcp-config', '{"mcpServers":{}}',
                '--prompt-suggestions', 'false']
     command += ['--resume' if has_messages else '--session-id', session_id]
@@ -148,8 +174,22 @@ def main():
         command += ['--debug-file', env['CLAUDE_KNOWLEDGE_TEST_DEBUG']]
     if args.prompt is not None:
         command += ['-p', '--max-turns', '1', '--output-format', 'json' if args.json else 'text', args.prompt]
+        if args.max_cost is not None:
+            command += ['--max-budget-usd', args.max_cost]
     os.chdir(data)
-    os.execvpe(executable, command, env)
+    if test_endpoint:
+        os.execvpe(executable, command, env)
+    from spend_guard import run_cli
+    test_upstream = env.get('CLAUDE_KNOWLEDGE_GUARD_TEST_UPSTREAM')
+    if test_upstream:
+        parsed = urllib.parse.urlsplit(test_upstream)
+        if not key.startswith('localhost-') or parsed.scheme != 'http' or parsed.hostname != '127.0.0.1' or not parsed.port:
+            fail('Guard tests require a fake localhost key and localhost upstream.')
+    try:
+        status = run_cli(command, env, data, session_id, source, key, secret_name, args.max_cost, test_upstream)
+    except (ValueError, InvalidOperation) as error:
+        fail(str(error))
+    sys.exit(status)
 
 if __name__ == '__main__':
     main()
