@@ -46,30 +46,67 @@ consume storage. GitHub can delete an inactive Codespace after 30 days, so selec
 **Keep codespace** or keep a separate backup of the data directory. Deletion erases
 the local source and conversation. Cache expiry only changes the next input bill.
 
-## Optional Android client commands, if you use Termux
+## Recommended Android 14 setup
 
-Install `gh` and `openssh` in Termux and sign in to the same GitHub account. Only the
-SSH client runs on Android; Claude Code and its data stay in the Linux Codespace.
-After allowing storage access with `termux-setup-storage`, a file in Downloads can
-be copied with:
+Use **Termux for GitHub authentication and transport**, and **ConnectBot for the
+Arabic terminal display**. Claude Code and the source remain in Linux Codespaces.
+Stock Termux has a reported Arabic shaping/direction bug. The official ConnectBot
+development build below includes the merged Arabic shaping and paragraph bidi
+implementation for Android 12 and later. Its stable Play Store release predates
+that implementation, so use this specific official development build.
 
-```sh
-pkg install gh openssh
-termux-setup-storage
-gh auth login --hostname github.com --git-protocol https --web --scopes codespace
-gh codespace cp --expand -c claude-knowledge-wv5gr9v9wq9xhvg4q ~/storage/downloads/knowledge.md remote:/workspaces/claude-knowledge-data/knowledge.md
-gh codespace ssh -c claude-knowledge-wv5gr9v9wq9xhvg4q
-knowledge
-```
+1. Install [official Termux 0.118.3](https://github.com/termux/termux-app/releases/download/v0.118.3/termux-app_v0.118.3%2Bgithub-debug_universal.apk)
+   and [official ConnectBot Arabic build](https://github.com/connectbot/connectbot/releases/download/git-v1.10.9-161-gbec5c69a/ConnectBot-git-v1.10.9-161-gbec5c69a-oss.apk).
+   Allow installation from your browser when Android asks.
+2. Open Termux and paste:
 
-The copy command's `--expand` flag was necessary and tested with these constant
-remote paths. Downloading and uploading the Arabic test file preserved its bytes.
-Run `knowledge` after SSH opens the remote shell. Your original source is supplied
-in full when you ask your first question; installation and `knowledge check` do
-not send it to the model.
+   ```sh
+   pkg install -y curl
+   curl -fL https://raw.githubusercontent.com/amywisconsin12121-gif/blsnk/main/.claude-knowledge/android-setup.sh -o ~/android-setup.sh
+   bash ~/android-setup.sh
+   ```
 
-Arabic shaping and text direction depend on the Android terminal/version. Stock
-Termux 0.118.3 has an open report of disconnected Arabic letters and wrong
-direction; its native fix proposal is not merged. Do not assume Arabic display
-works there. UTF-8 transport passed local tests; your device's visual rendering
-still needs a check. UTF-8 locale settings alone do not fix this.
+   Allow storage access, sign into GitHub as **amywisconsin12121-gif** using its
+   browser code, and set Termux battery usage to **Unrestricted** in Android settings.
+3. In ConnectBot: **Manage pubkeys → + → Generate**, name it `claude`, select
+   **Ed25519**, and generate. Open that key's menu and select **Copy public key**.
+   In Termux run `cs key`, paste that public key, and press Enter. The private
+   key stays inside ConnectBot.
+4. Put your complete original file in phone **Downloads**, named `knowledge.md`.
+   In Termux run `cs upload`, then `cs`. Upload verifies the complete file's hash
+   and makes no model request. Keep Termux running while using ConnectBot.
+5. Add a ConnectBot SSH host: **`codespace@127.0.0.1:2222`**. In its settings,
+   **Use pubkey authentication**, select the `claude` key. Connect and accept the
+   initial server fingerprint for your GitHub-authenticated tunnel. In the Linux
+   shell run:
+
+   ```sh
+   printf '%s\n' 'العربية متصلة من اليمين إلى اليسار'
+   ```
+
+   Check that the letters join and the sentence reads correctly. Then run
+   `knowledge`. Its first Arabic input and answer also need a visual check on
+   your actual device; server-side UTF-8 tests cannot establish pixel-perfect
+   phone rendering. If the input cursor misbehaves, compose the question in
+   Android's text box and paste it as one block.
+
+The phone helper's SSH tunnel, public-key authentication, repeated connections,
+Arabic byte transport, and complete-file upload were tested against your actual
+Codespace with **zero model calls**. The ConnectBot download's SHA-256 matched
+GitHub's official release digest:
+`d1407371489c3995574c8c0e05be3ad801fe1fcee1373bae4943ec67093f4031`.
+Physical Android display remains unverified until your phone check.
+
+**Stop:** finish the answer, type `/exit`, then `exit` in the Linux shell. In
+Termux press Ctrl+C to close the tunnel, then run `cs stop` to stop Codespaces
+compute. **Resume:** in Termux run `cs`, reconnect the same ConnectBot host, then
+run `knowledge` in Linux. These steps keep the entire saved conversation.
+
+Your full source reaches the model when you ask a question. Installation,
+`cs upload`, the Arabic `printf` check, and `knowledge check` make no model request.
+The copy helper uses the tested `gh codespace cp --expand` with fixed remote paths.
+
+Sources: [Termux Arabic issue](https://github.com/termux/termux-app/issues/5252),
+[unmerged Termux fix](https://github.com/termux/termux-app/pull/5179),
+[merged ConnectBot shaping](https://github.com/connectbot/termlib/pull/278),
+[official ConnectBot release](https://github.com/connectbot/connectbot/releases/tag/git-v1.10.9-161-gbec5c69a).

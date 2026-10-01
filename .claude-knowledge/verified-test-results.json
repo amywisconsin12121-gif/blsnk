@@ -37,5 +37,15 @@
   "native_interactive_tui_in_codespace": true,
   "interactive_arabic_transport": true,
   "interactive_exit_and_resume_passed": true,
-  "interactive_test_paid_requests": 0
+  "interactive_test_paid_requests": 0,
+  "android_recommended_display_client": "official ConnectBot prerelease git-v1.10.9-161-gbec5c69a with termlib 0.3.9",
+  "android_transport_client": "Termux with GitHub CLI",
+  "connectbot_apk_sha256_verified": true,
+  "phone_bridge_public_key_only": true,
+  "phone_bridge_real_ssh_connections_passed": 2,
+  "phone_bridge_arabic_bytes_exact": true,
+  "phone_helper_upload_hash_matches": true,
+  "phone_bridge_test_model_requests": 0,
+  "tmux_available": true,
+  "tmux_ssh_disconnect_reconnect_passed": true
 }

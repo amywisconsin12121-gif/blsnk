@@ -115,6 +115,24 @@ do not fix a terminal's missing shaping/bidirectional support. The Android
 terminal/version must be checked separately. No reshaping or reversing of the
 stored source is performed.
 
+For your Android 14 phone, the prepared recommendation is Termux for GitHub login
+and the transport, plus the **official ConnectBot development build
+`git-v1.10.9-161-gbec5c69a`** for display. Its `termlib` 0.3.9 dependency includes
+native Android Arabic shaping and paragraph bidi; the earlier stable ConnectBot
+1.10.9 uses `termlib` 0.1.0, before that feature. Android 14 meets the renderer's
+Android 12/API 31 minimum. This is an official prerelease, not a promise that every
+Claude Code cursor operation will render perfectly on your physical phone.
+The APK's SHA-256 matched the release API digest, and upstream Arabic golden-image
+and bidi tests were inspected. No Android hardware test was possible here.
+
+The `cs` phone helper binds only `127.0.0.1:2222` and passes each SSH connection
+through `gh codespace ssh --stdio`. GitHub authorizes the Codespaces transport;
+ConnectBot authenticates using its own generated key. Only its public key is
+needed by the helper. Two real SSH connections through this path preserved Arabic
+output exactly. The helper's entire-file upload also passed a SHA-256 comparison.
+These were shell/transport tests and made no paid model requests. Phone operation
+and visual rendering are still pending. The full procedure is in QUICKSTART.md.
+
 ## Actual test status
 
 **Passed locally, using real Claude Code and a local mock endpoint:** native 2.1.286
@@ -183,4 +201,8 @@ answers and cache counts above came from the live provider, not the mock.
 - [Arabic display-only report, macOS](https://github.com/anthropics/claude-code/issues/95667)
 - [Arabic display report, Termux 0.118.3](https://github.com/termux/termux-app/issues/5252)
 - [Termux native RTL/shaping proposal, currently unmerged](https://github.com/termux/termux-app/pull/5179)
+- [Merged ConnectBot native script shaping](https://github.com/connectbot/termlib/pull/278)
+- [ConnectBot shaping and bidi implementation](https://github.com/connectbot/termlib/blob/0.3.9/lib/src/main/java/org/connectbot/terminal/TerminalShaping.kt)
+- [ConnectBot bidi and shaping checks](https://github.com/connectbot/termlib/blob/0.3.9/lib/src/sharedTest/java/org/connectbot/terminal/TerminalShapingChecks.kt)
+- [Official ConnectBot Android development build](https://github.com/connectbot/connectbot/releases/tag/git-v1.10.9-161-gbec5c69a)
 - [Supplemental user experience on effort](https://www.claudecodeclub.ai/blog/claude-code-effort-levels), anecdotal and not an Arabic full-source evaluation

@@ -6,6 +6,10 @@ effort, adaptive thinking, 1M context and one-hour cache requests.
 **Status: Linux Codespaces, live Opus, caching and stop/resume tested. Android
 display still needs a check on your SSH app.**
 
+For Android 14 Arabic display, use the official ConnectBot development build and
+Termux GitHub tunnel prepared in the [phone steps](.claude-knowledge/QUICKSTART.md#recommended-android-14-setup).
+The phone tunnel and full-file upload passed tests with no model calls.
+
 Your prepared Codespace is `claude-knowledge-wv5gr9v9wq9xhvg4q`.
 
 The fresh Codespace installs Claude Code automatically. Add `CONCENTRATE_API_KEY`

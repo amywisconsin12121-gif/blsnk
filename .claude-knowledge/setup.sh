@@ -42,6 +42,15 @@ if line not in text:
 print('Setup complete. Upload knowledge.md to ' + str(data) + ', then run knowledge.')
 PY
 if ! command -v tmux >/dev/null 2>&1; then
-  sudo apt-get update -qq
-  sudo apt-get install -y -qq tmux
+  # The universal image includes unrelated third-party package repositories.
+  # tmux needs only the signed base distribution repositories; an expired Yarn
+  # key must not prevent this non-coding setup from completing.
+  apt_source=/etc/apt/sources.list
+  if [[ -f /etc/apt/sources.list.d/ubuntu.sources ]]; then
+    apt_source=/etc/apt/sources.list.d/ubuntu.sources
+  elif [[ -f /etc/apt/sources.list.d/debian.sources ]]; then
+    apt_source=/etc/apt/sources.list.d/debian.sources
+  fi
+  sudo apt-get -o "Dir::Etc::sourcelist=$apt_source" -o Dir::Etc::sourceparts=- update -qq
+  sudo apt-get -o "Dir::Etc::sourcelist=$apt_source" -o Dir::Etc::sourceparts=- install -y -qq tmux
 fi
