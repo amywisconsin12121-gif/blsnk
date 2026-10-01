@@ -61,13 +61,17 @@ that implementation, so use this specific official development build.
 2. Open Termux and paste:
 
    ```sh
-   pkg install -y curl
-   curl -fL https://raw.githubusercontent.com/amywisconsin12121-gif/blsnk/main/.claude-knowledge/android-setup.sh -o ~/android-setup.sh
+   apt update && apt full-upgrade -y &&
+   curl -fL https://raw.githubusercontent.com/amywisconsin12121-gif/blsnk/main/.claude-knowledge/android-setup.sh -o ~/android-setup.sh &&
    bash ~/android-setup.sh
    ```
 
    Allow storage access, sign into GitHub as **amywisconsin12121-gif** using its
    browser code, and set Termux battery usage to **Unrestricted** in Android settings.
+   The full package upgrade is required before using curl on a fresh Termux
+   bootstrap. If curl reports `CANNOT LINK EXECUTABLE` with a missing OpenSSL
+   symbol, these same direct `apt` commands repair the partial upgrade;
+   `pkg` checks mirrors using curl and can fail while curl is broken.
 3. In ConnectBot: **Manage pubkeys → + → Generate**, name it `claude`, select
    **Ed25519**, and generate. Open that key's menu and select **Copy public key**.
    In Termux run `cs key`, paste that public key, and press Enter. The private

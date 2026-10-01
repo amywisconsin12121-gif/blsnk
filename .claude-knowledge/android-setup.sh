@@ -5,7 +5,11 @@ if ! command -v pkg >/dev/null || [ -z "${PREFIX:-}" ]; then
   echo 'Run this script inside the Termux Android app.' >&2
   exit 1
 fi
-pkg update -y
+# Termux is a rolling distribution: partial upgrades can leave curl linked to
+# OpenSSL symbols absent from the older bootstrap. apt itself uses GnuTLS, so
+# it can repair this even when curl (and pkg's curl-based mirror check) fails.
+apt update
+apt full-upgrade -y
 pkg install -y curl gh openssh python
 phone_dir="$HOME/.local/share/claude-phone"
 mkdir -p "$phone_dir"
