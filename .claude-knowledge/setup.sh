@@ -27,6 +27,9 @@ import json, pathlib, shutil, sys
 data, setup, secret_name = pathlib.Path(sys.argv[1]), pathlib.Path(sys.argv[2]), sys.argv[3]
 shutil.copyfile(setup / 'knowledge.py', data / 'knowledge.py')
 (data / 'knowledge.py').chmod(0o700)
+for name in ('display_check.py', 'native_mock_test.py'):
+    shutil.copyfile(setup / name, data / name)
+(data / 'display_check.py').chmod(0o700)
 shutil.copyfile(setup / 'Knowledge.md', data / '.claude/output-styles/Knowledge.md')
 shutil.copyfile(setup / 'settings.json', data / '.claude/settings.json')
 (data / 'secret-name.txt').write_text(secret_name + '\n')
@@ -34,6 +37,10 @@ launcher = pathlib.Path.home() / '.local/bin/knowledge'
 if launcher.exists() or launcher.is_symlink():
     launcher.unlink()
 launcher.symlink_to(data / 'knowledge.py')
+display_launcher = pathlib.Path.home() / '.local/bin/knowledge-display-check'
+if display_launcher.exists() or display_launcher.is_symlink():
+    display_launcher.unlink()
+display_launcher.symlink_to(data / 'display_check.py')
 profile = pathlib.Path.home() / '.bashrc'
 text = profile.read_text() if profile.exists() else ''
 line = 'export PATH="$HOME/.local/bin:$PATH"'

@@ -14,6 +14,11 @@ ROOT = Path(__file__).parent
 calls = []
 
 class Handler(BaseHTTPRequestHandler):
+    response_text = '\u0627\u062e\u062a\u0628\u0627\u0631 \u0645\u062d\u0644\u064a \u0646\u0627\u062c\u062d.'
+    token_count = 180000
+    mock_usage = {'input_tokens': 100, 'output_tokens': 10, 'cache_creation_input_tokens': 180000,
+                  'cache_read_input_tokens': 0,
+                  'cache_creation': {'ephemeral_1h_input_tokens': 180000, 'ephemeral_5m_input_tokens': 0}}
     def log_message(self, *args):
         pass
     def do_GET(self):
@@ -33,13 +38,11 @@ class Handler(BaseHTTPRequestHandler):
         raw = self.rfile.read(int(self.headers.get('Content-Length', 0)))
         body = json.loads(raw)
         if 'count_tokens' in self.path:
-            self.respond({'input_tokens': 180000})
+            self.respond({'input_tokens': self.token_count})
             return
         calls.append(body)
-        content = '\u0627\u062e\u062a\u0628\u0627\u0631 \u0645\u062d\u0644\u064a \u0646\u0627\u062c\u062d.'
-        usage = {'input_tokens': 100, 'output_tokens': 10, 'cache_creation_input_tokens': 180000,
-                 'cache_read_input_tokens': 0,
-                 'cache_creation': {'ephemeral_1h_input_tokens': 180000, 'ephemeral_5m_input_tokens': 0}}
+        content = self.response_text
+        usage = self.mock_usage.copy()
         msg = {'id': 'msg_mock_' + str(len(calls)), 'type': 'message', 'role': 'assistant',
                'model': 'claude-opus-5-5', 'content': [], 'stop_reason': None,
                'stop_sequence': None, 'usage': usage}
@@ -59,7 +62,7 @@ class Handler(BaseHTTPRequestHandler):
                                      'delta': {'type': 'text_delta', 'text': content}}),
             ('content_block_stop', {'type': 'content_block_stop', 'index': 0}),
             ('message_delta', {'type': 'message_delta', 'delta': {'stop_reason': 'end_turn', 'stop_sequence': None},
-                               'usage': {'output_tokens': 10}}),
+                               'usage': {'output_tokens': usage['output_tokens']}}),
             ('message_stop', {'type': 'message_stop'}),
         ]
         for name, value in events:
