@@ -72,6 +72,9 @@ that implementation, so use this specific official development build.
    bootstrap. If curl reports `CANNOT LINK EXECUTABLE` with a missing OpenSSL
    symbol, these same direct `apt` commands repair the partial upgrade;
    `pkg` checks mirrors using curl and can fail while curl is broken.
+   If an earlier installer finishes browser login but says Git is missing, run
+   `pkg install -y git && gh auth setup-git --hostname github.com`. Your successful
+   GitHub login is retained; you do not need another browser code.
 3. In ConnectBot: **Manage pubkeys → + → Generate**, name it `claude`, select
    **Ed25519**, and generate. Open that key's menu and select **Copy public key**.
    In Termux run `cs key`, paste that public key, and press Enter. The private

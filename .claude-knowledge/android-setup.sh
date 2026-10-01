@@ -10,7 +10,7 @@ fi
 # it can repair this even when curl (and pkg's curl-based mirror check) fails.
 apt update
 apt full-upgrade -y
-pkg install -y curl gh openssh python
+pkg install -y curl gh git openssh python
 phone_dir="$HOME/.local/share/claude-phone"
 mkdir -p "$phone_dir"
 chmod 700 "$phone_dir"
@@ -27,6 +27,7 @@ termux-setup-storage
 if ! gh auth status --hostname github.com >/dev/null 2>&1; then
   gh auth login --hostname github.com --git-protocol https --web --scopes codespace
 fi
+gh auth setup-git --hostname github.com
 echo 'Sign in as amywisconsin12121-gif. Allow Termux storage access and set its battery usage to Unrestricted.'
 echo 'Next: generate an Ed25519 key in ConnectBot, copy its PUBLIC key, then run: cs key'
 echo 'After that: cs upload  (original knowledge.md in Downloads), then: cs'
